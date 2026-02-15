@@ -37,26 +37,26 @@
 #endif
 
 #if ENABLED(SINGLENOZZLE)
-  #define _ALT_P active_extruder
+  #define _ALT_P motion.extruder
   #define _CNT_P EXTRUDERS
 #else
-  #define _ALT_P _MIN(active_extruder, FAN_COUNT - 1)
+  #define _ALT_P _MIN(motion.extruder, FAN_COUNT - 1)
   #define _CNT_P FAN_COUNT
 #endif
 
 /**
  * M106: Set Fan Speed
  *
- *  I<index> Material Preset index (if material presets are defined)
- *  S<int>   Speed between 0-255
- *  P<index> Fan index, if more than one fan
+ * Parameters:
+ *   I<index>  Material Preset index (if material presets are defined)
+ *   S<int>    Speed between 0-255
+ *   P<index>  Fan index, if more than one fan
  *
- * With EXTRA_FAN_SPEED enabled:
- *
- *  T<int>   Restore/Use/Set Temporary Speed:
- *           1     = Restore previous speed after T2
- *           2     = Use temporary speed set with T3-255
- *           3-255 = Set the speed for use with T2
+ * With EXTRA_FAN_SPEED:
+ *   T<int>  Restore/Use/Set Temporary Speed:
+ *     T1      Restore previous speed after T2
+ *     T2      Use temporary speed set with T3-255
+ *     T3-255  Set the speed for use with T2
  */
 void GcodeSuite::M106() {
   const uint8_t pfan = parser.byteval('P', _ALT_P);
@@ -71,7 +71,7 @@ void GcodeSuite::M106() {
     }
   #endif
 
-  const uint16_t dspeed = parser.seen_test('A') ? thermalManager.fan_speed[active_extruder] : 255;
+  const uint16_t dspeed = parser.seen_test('A') ? thermalManager.fan_speed[motion.extruder] : 255;
 
   uint16_t speed = dspeed;
 
