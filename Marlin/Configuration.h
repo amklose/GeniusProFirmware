@@ -124,11 +124,18 @@
   //#define RS485_BUS_BUFFER_SIZE 128
 #endif
 
+// Enable CAN bus support and protocol
+//#define CAN_HOST
+//#define CAN_TOOLHEAD
+#if ANY(CAN_HOST, CAN_TOOLHEAD)
+  //#define CAN_DEBUG
+#endif
+
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Genius Pro 1"
+#define CUSTOM_MACHINE_NAME "Genius Pro 2"
 //#define CONFIGURABLE_MACHINE_NAME // Add G-code M550 to set/report the machine name
 
 // Printer's unique ID, used by some programs to differentiate between machines.
@@ -562,6 +569,7 @@
  * ================================================================
  *  Analog Thermocouple Boards
  * ================================================================
+ *   -18 : ADS1118 with Thermocouple, e.g., Mightyboard rev G/H
  *    -4 : AD8495 with Thermocouple
  *    -1 : AD595  with Thermocouple
  *
@@ -720,13 +728,13 @@
   #if ENABLED(PID_PARAMS_PER_HOTEND)
     // Specify up to one value per hotend here, according to your setup.
     // If there are fewer values, the last one applies to the remaining hotends.
-    #define DEFAULT_Kp_LIST {  9.95,  9.95 }
-    #define DEFAULT_Ki_LIST {  1.04,  1.04 }
-    #define DEFAULT_Kd_LIST { 23.88, 23.88 }
+    #define DEFAULT_KP_LIST {  9.95,  9.95 }
+    #define DEFAULT_KI_LIST {  1.04,  1.04 }
+    #define DEFAULT_KD_LIST { 23.88, 23.88 }
   #else
-    #define DEFAULT_Kp  9.95
-    #define DEFAULT_Ki  1.04
-    #define DEFAULT_Kd 23.88
+    #define DEFAULT_KP  9.95
+    #define DEFAULT_KI  1.04
+    #define DEFAULT_KD 23.88
   #endif
 #else
   #define BANG_MAX 255    // Limit hotend current while in bang-bang mode; 255=full current
@@ -824,9 +832,9 @@
 
   // 120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   // from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-  #define DEFAULT_bedKp 22.14
-  #define DEFAULT_bedKi 1.31
-  #define DEFAULT_bedKd 249.15
+  #define DEFAULT_BED_KP 22.14
+  #define DEFAULT_BED_KI 1.31
+  #define DEFAULT_BED_KD 249.15
 
   // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
 #else
@@ -1214,28 +1222,6 @@
 //===========================================================================
 
 // @section endstops
-
-// Specify here all the endstop connectors that are connected to any endstop or probe.
-// Almost all printers will be using one per axis. Probes will use one or more of the
-// extra connectors. Leave undefined any used for non-endstop and non-probe purposes.
-//#define USE_XMIN_PLUG
-//#define USE_YMIN_PLUG
-//#define USE_ZMIN_PLUG
-//#define USE_IMIN_PLUG
-//#define USE_JMIN_PLUG
-//#define USE_KMIN_PLUG
-//#define USE_UMIN_PLUG
-//#define USE_VMIN_PLUG
-//#define USE_WMIN_PLUG
-//#define USE_XMAX_PLUG
-//#define USE_YMAX_PLUG
-//#define USE_ZMAX_PLUG
-//#define USE_IMAX_PLUG
-//#define USE_JMAX_PLUG
-//#define USE_KMAX_PLUG
-//#define USE_UMAX_PLUG
-//#define USE_VMAX_PLUG
-//#define USE_WMAX_PLUG
 
 // Enable pullup for all endstops to prevent a floating state
 #define ENDSTOPPULLUPS
@@ -2244,6 +2230,12 @@
   #endif
 
   /**
+   * Add Z offset (M424 Z) that applies to all moves at the planner level.
+   * This Z offset will be automatically set to the middle value with G29.
+   */
+  //#define GLOBAL_MESH_Z_OFFSET
+
+  /**
    * For Cartesian machines, instead of dividing moves on mesh boundaries,
    * split up moves into short segments like a Delta. This follows the
    * contours of the bed more closely than edge-to-edge straight moves.
@@ -2554,13 +2546,13 @@
 #define PREHEAT_1_LABEL       "PLA"
 #define PREHEAT_1_TEMP_HOTEND 210
 #define PREHEAT_1_TEMP_BED     70
-#define PREHEAT_1_TEMP_CHAMBER 35
+#define PREHEAT_1_TEMP_CHAMBER 0
 #define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
 
-#define PREHEAT_2_LABEL       "ABS"
+#define PREHEAT_2_LABEL       "PETG"
 #define PREHEAT_2_TEMP_HOTEND 240
-#define PREHEAT_2_TEMP_BED    110
-#define PREHEAT_2_TEMP_CHAMBER 35
+#define PREHEAT_2_TEMP_BED    90
+#define PREHEAT_2_TEMP_CHAMBER 0
 #define PREHEAT_2_FAN_SPEED     0 // Value from 0 to 255
 
 /**
@@ -2894,7 +2886,7 @@
 // If you have a speaker that can produce tones, enable it here.
 // By default Marlin assumes you have a buzzer with a fixed frequency.
 //
-//#define SPEAKER
+// #define SPEAKER
 
 //
 // The duration and frequency for the UI feedback sound.
@@ -3388,6 +3380,12 @@
 // 320x240 Nextion 2.8" serial TFT Resistive Touch Screen NX3224T028
 //
 //#define NEXTION_TFT
+
+//
+// PanelDue touch controller by Escher3D
+// https://escher3d.com/pages/order/products/product2.php
+//
+//#define PANELDUE
 
 //
 // Third-party or vendor-customized controller interfaces.
